@@ -10,7 +10,10 @@ Declare Sub NewWindow(id As UInteger, x As Integer, y As Integer, w As Integer, 
 Declare Sub MAINLOOP()
 Declare Sub DoEvents()
 Declare Sub RePaint()
-Declare Sub MoveResizeWindows()
+
+Declare Sub GetFocusWindow()
+Declare Sub ResizeWindow()
+Declare Sub MoveWindow()
 
 Sub Init()
 	ScreenRes MAXW, MAXH, 32, 2
@@ -33,32 +36,19 @@ Sub NewWindow(id As UInteger, x As Integer, y As Integer, w As Integer, h As Int
 	pWindows(iWindowPopulation) = New hWindow(id, x, y, w, h, title, c)
 End Sub
 
-Sub MoveResizeWindows() '...'
-Dim As Integer mx, my, mb, x1, y1
+Sub ResizeWindow() '...'
+	Dim As Integer mx, my, mb, x1, y1
+	RePaint()
 
     GetMouse mx, my, , mb
     x1 = mx
     y1 = my
     If mb = 1 Then
-        For i As Integer = UBound(pWindows) To LBound(pWindows) Step -1
+		For i As Integer = UBound(pWindows) To LBound(pWindows) Step -1
 			If pWindows(i) = 0 Then Continue For
-            If (mx > pWindows(i)->x And mx < pWindows(i)->x + pWindows(i)->w) And (my > pWindows(i)->y And my < pWindows(i)->y + pWindows(i)->h) Then
-				If i = 1 And UBound(pWindows) > 1 Then
-					Swap pWindows(1), pWindows(UBound(pWindows))
-				End If
-				
-				If i > 1 Then
-                	For m As Integer = LBound(pWindows) To UBound(pWindows) Step 1
-                		If m + 1 > UBound(pWindows) Then Exit For
-                		Swap pWindows(m), pWindows(UBound(pWindows))
-                	Next
-				End If
-				
-                If pWindows(UBound(pWindows)) = 0 Then Return
-
-                If i < UBound(pWindows) Then RePaint()
-                
-                If mx > (pWindows(UBound(pWindows))->x + pWindows(UBound(pWindows))->w - 10) And my > (pWindows(UBound(pWindows))->y + pWindows(UBound(pWindows))->h - 10) Then
+			If pWindows(i)->doResizeWindow = True Then
+				pWindows(i)->doResizeWindow = False
+                Swap pWindows(i), pWindows(UBound(pWindows))
                     Do
                         GetMouse mx,my,,mb
                         pWindows(UBound(pWindows))->w += mx - x1
@@ -71,7 +61,25 @@ Dim As Integer mx, my, mb, x1, y1
                         If pWindows(UBound(pWindows))->h >= MAXH Then  pWindows(UBound(pWindows))->h = MAXH
                         RePaint()
                     Loop Until mb = 0
-                ElseIf my < (pWindows(UBound(pWindows))->y + TBH) Then
+				Exit For
+			End If
+		Next
+    End If
+End Sub
+
+Sub MoveWindow() '...'
+	Dim As Integer mx, my, mb, x1, y1
+	RePaint()
+
+    GetMouse mx, my, , mb
+    x1 = mx
+    y1 = my
+    If mb = 1 Then
+		For i As Integer = UBound(pWindows) To LBound(pWindows) Step -1
+			If pWindows(i) = 0 Then Continue For
+			If pWindows(i)->doMoveWindow = True Then
+				pWindows(i)->doMoveWindow = False
+                Swap pWindows(i), pWindows(UBound(pWindows))
                     Do
                         GetMouse mx,my,,mb
                         pWindows(UBound(pWindows))->x += mx - x1
@@ -80,16 +88,33 @@ Dim As Integer mx, my, mb, x1, y1
                         y1 = my
                         RePaint()
                     Loop Until mb = 0
-                End If
-                Exit For
-            End If
-        Next i
+				Exit For
+			End If
+		Next
     End If
+End Sub
+
+Sub GetFocusWindow() '...'
+Dim As Integer mx, my, mb
 	RePaint()
+    GetMouse mx, my, , mb
+    If mb = 1 Then
+		For i As Integer = UBound(pWindows) To LBound(pWindows) Step -1
+			If pWindows(i) = 0 Then Continue For
+			If pWindows(i)->doGetFocus = True Then
+				pWindows(i)->doGetFocus = False
+                Swap pWindows(i), pWindows(UBound(pWindows))
+				RePaint()
+				Exit For
+			End If
+		Next
+    End If
 End Sub
 
 Sub DoEvents()
-	MoveResizeWindows()		'manage move and resize of windows
+	GetFocusWindow()
+	ResizeWindow()
+	MoveWindow()
 	
 	For i As Integer = 1 To UBound(pWindows)	'doevents of every window
 		If pWindows(i) = 0 Then Continue For	'skip deleted windows

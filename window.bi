@@ -14,6 +14,12 @@ Type hWindow
     Declare Sub DoEvents()
     Declare Sub onCloseWindow()
     As Boolean doCloseWindow
+    Declare Sub onFocusWindow()
+    As Boolean doGetFocus
+    Declare Sub onResizeWindow()
+    As Boolean doResizeWindow
+    Declare Sub onMoveWindow()
+    As Boolean doMoveWindow
 End Type
 
 Constructor hWindow()
@@ -30,12 +36,51 @@ Constructor hWindow(id As UInteger, x As Integer, y As Integer, w As Integer, h 
   This.hasCloseButton = True
   This.hasMaximizeButton = True
   This.hasMinimizeButton = True
-  This.doCloseWindow = False 
+  This.doCloseWindow = False
+  This.doGetFocus = False
+  This.doResizeWindow = False
+  This.doMoveWindow = False
   redraw()
 End Constructor
 
 Sub hWindow.DoEvents()
 	This.onCloseWindow()
+	This.onFocusWindow()
+	This.onResizeWindow()
+	This.onMoveWindow()
+End Sub
+
+Sub hWindow.onMoveWindow()
+	Dim As Integer mx, my, mb
+
+    GetMouse mx, my, , mb
+    If mb = 1 Then
+    	If mx > This.x And mx < This.x + This.w And my > This.y And my < This.y + TBH Then
+    		This.doMoveWindow = True 
+    	End If
+    End If
+End Sub
+
+Sub hWindow.onResizeWindow()
+	Dim As Integer mx, my, mb
+
+    GetMouse mx, my, , mb
+    If mb = 1 Then
+    	If mx > This.x + This.w - 10 And mx < This.x + This.w And my > This.y + This.h - 10 And my < This.y + This.h Then
+    		This.doResizeWindow = True 
+    	End If
+    End If
+End Sub
+
+Sub hWindow.onFocusWindow()
+	Dim As Integer mx, my, mb
+
+    GetMouse mx, my, , mb
+    If mb = 1 Then
+    	If mx > This.x And mx < This.x + This.w And my > This.y And my < This.y + This.h Then
+    		This.doGetFocus = True 
+    	End If
+    End If
 End Sub
 
 Sub hWindow.onCloseWindow()
