@@ -1,15 +1,16 @@
 ﻿#define TBH 25   'titlebar height
 #define MINWH 80 'min width/height
+
 Type hWindow
-    As UInteger id				'id of window
+    As Integer id				'id of window
     As Integer x, y, w, h		'x,y,width,heigt
-    As UInteger c				'c as color
+    As ULong c				'c as color
     As String title				'title as string
     As Boolean hasCloseButton
     As Boolean hasMinimizeButton
     As Boolean hasMaximizeButton
     Declare Constructor()
-    Declare Constructor(As UInteger, As Integer, As Integer, As Integer, As Integer, As String, As UInteger)
+    Declare Constructor(As Integer, As Integer, As Integer, As Integer, As Integer, As String, As ULong)
     Declare Sub redraw()
     Declare Sub DoEvents()
     Declare Sub onCloseWindow()
@@ -20,12 +21,13 @@ Type hWindow
     As Boolean doResizeWindow
     Declare Sub onMoveWindow()
     As Boolean doMoveWindow
+    As UInteger Zorder
 End Type
 
 Constructor hWindow()
 End Constructor
 
-Constructor hWindow(id As UInteger, x As Integer, y As Integer, w As Integer, h As Integer, t As String, c As UInteger)
+Constructor hWindow(id As Integer, x As Integer, y As Integer, w As Integer, h As Integer, t As String, c As ULong)
   This.id = id
   This.x = x
   This.y = y
@@ -40,6 +42,7 @@ Constructor hWindow(id As UInteger, x As Integer, y As Integer, w As Integer, h 
   This.doGetFocus = False
   This.doResizeWindow = False
   This.doMoveWindow = False
+  This.Zorder = 0
   redraw()
 End Constructor
 
@@ -56,7 +59,8 @@ Sub hWindow.onMoveWindow()
     GetMouse mx, my, , mb
     If mb = 1 Then
     	If mx > This.x And mx < This.x + This.w And my > This.y And my < This.y + TBH Then
-    		This.doMoveWindow = True 
+    		This.doMoveWindow = True
+    		iActiveWindow = This.id
     	End If
     End If
 End Sub
@@ -67,7 +71,8 @@ Sub hWindow.onResizeWindow()
     GetMouse mx, my, , mb
     If mb = 1 Then
     	If mx > This.x + This.w - 10 And mx < This.x + This.w And my > This.y + This.h - 10 And my < This.y + This.h Then
-    		This.doResizeWindow = True 
+    		This.doResizeWindow = True
+    		iActiveWindow = This.id
     	End If
     End If
 End Sub
@@ -78,7 +83,8 @@ Sub hWindow.onFocusWindow()
     GetMouse mx, my, , mb
     If mb = 1 Then
     	If mx > This.x And mx < This.x + This.w And my > This.y And my < This.y + This.h Then
-    		This.doGetFocus = True 
+    		This.doGetFocus = True
+    		iActiveWindow = This.id
     	End If
     End If
 End Sub
@@ -90,7 +96,8 @@ Sub hWindow.onCloseWindow()
 	If mb = 1 Then
 		If mx > x + w - 13 And mx < x + w - 13 + 6 And my > y + TBH / 2 - 3 And my < y + TBH Then
 			'title = "Window " & id & " " & Str(mx) & " " & Str(my)
-			doCloseWindow = True 
+			doCloseWindow = True
+			iActiveWindow = This.id 
 		End If
 	End If
 End Sub
