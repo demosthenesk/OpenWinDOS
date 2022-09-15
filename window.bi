@@ -106,6 +106,7 @@ Sub hWindow.onMaximizeWindow()
     If mb = 1 Then
 		If mx > x + w - 41 And mx < x + w - 41 + 6 And my > y + TBH / 2 - 3 And my < y + TBH Then
 '			title = "Window " & id & " " & Str(mx) & " " & Str(my)
+			This.doMinimizeWindow = False 
     		If This.doMaximizeWindow = False Then 
     			This.doMaximizeWindow = True
     			This.x2 = This.x
@@ -122,18 +123,19 @@ Sub hWindow.onMaximizeWindow()
     		End If
     		iActiveWindow = This.id
     		This.doGetFocus = True
-    		this.onFocusWindow()
+    		This.onFocusWindow()
     	End If
     End If
 End Sub
 
-Sub hWindow.onMinimizeWindow() '...'
+Sub hWindow.onMinimizeWindow()
 	Dim As Integer mx, my, mb
 
     GetMouse mx, my, , mb
     If mb = 1 Then
 		If mx > x + w - 27 And mx < x + w - 27 + 6 And my > y + TBH / 2 - 3 And my < y + TBH Then
 '			title = "Window " & id & " " & Str(mx) & " " & Str(my)
+			This.doMaximizeWindow = False 
     		If This.doMinimizeWindow = False Then 
     			This.doMinimizeWindow = True
     			This.h2 = This.h
