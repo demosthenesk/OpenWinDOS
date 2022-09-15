@@ -253,6 +253,7 @@ Sub WatchWindows()
                         If pWindows(UBound(pWindows))->w >= MAXW Then  pWindows(UBound(pWindows))->w = MAXW
                         If pWindows(UBound(pWindows))->h >= MAXH Then  pWindows(UBound(pWindows))->h = MAXH
                         RePaint()
+                        Sleep(1, 1)
                     Loop Until mb = 0
 					Exit For
 				End If
@@ -269,6 +270,7 @@ Sub WatchWindows()
                         x1 = mx
                         y1 = my
                         RePaint()
+                        Sleep(1, 1)
                     Loop Until mb = 0
 					Exit For
 				EndIf
