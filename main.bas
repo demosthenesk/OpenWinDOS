@@ -45,12 +45,12 @@ End Sub
 Sub MAINLOOP() '...'
 	Do
 		DoEvents()
-		Sleep( 1, 1 )
+'		Sleep( 1, 1 )
 	Loop Until MultiKey(SC_ESCAPE) 'loop until ESC pressed
 
 End Sub
 
-Sub RePaint() '...'
+Sub RePaint()
 	Cls
 	For i As Integer = 1 To UBound(pWindows)
 		If pWindows(i) = 0 Then Continue For
@@ -59,6 +59,7 @@ Sub RePaint() '...'
 '		pWindows(1)->title = Str(iActiveWindow)
 	Next
 	Flip()
+	Sleep( 1, 1 )
 End Sub
 
 Init()
