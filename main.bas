@@ -34,12 +34,14 @@ Sub DoEvents()
 		pWindows(i)->DoEvents
 	Next
 	
-	CloseWindow()
-	ResizeWindow()
-	MoveWindow()
-	MinimizeWindow()
-	MaximizeWindow()
-	GetFocusWindow()
+	WatchWindows()
+	
+'	CloseWindow()
+'	ResizeWindow()
+'	MoveWindow()
+'	MinimizeWindow()
+'	MaximizeWindow()
+'	GetFocusWindow()
 End Sub
 
 Sub MAINLOOP() '...'

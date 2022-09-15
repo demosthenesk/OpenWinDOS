@@ -9,6 +9,8 @@ Declare Sub MoveWindow()
 Declare Sub CloseWindow()
 Declare Sub MinimizeWindow()
 
+Declare Sub WatchWindows()
+
 
 Type hWindow '...'
     As Integer id				'id of window
@@ -219,6 +221,107 @@ Sub NewWindow(id As Integer, x As Integer, y As Integer, w As Integer, h As Inte
 	pWindows(iWindowPopulation) = New hWindow(iWindowPopulation, x, y, w, h, title, c)
 End Sub
 
+Sub WatchWindows()
+
+	Dim As Integer mx, my, mb, x1, y1
+    GetMouse mx, my, , mb
+    x1 = mx
+    y1 = my
+    If mb = 1 Then
+		For i As Integer = UBound(pWindows) To LBound(pWindows) Step -1
+			If pWindows(i) = 0 Then Continue For
+			'------- Resize -------------------------------------------------------
+			If pWindows(i)->doResizeWindow = True Then 
+				pWindows(i)->doResizeWindow = False
+				If pWindows(i)->id = CInt(iActiveWindow) Then
+					pWindows(i)->doMinimizeWindow = False	'reset minimize on resize
+					pWindows(i)->doMaximizeWindow = False	'reset maximize on resize
+					
+	                Swap pWindows(i), pWindows(UBound(pWindows))
+                    Do
+                        GetMouse mx,my,,mb
+                        pWindows(UBound(pWindows))->w += mx - x1
+                        pWindows(UBound(pWindows))->h += my - y1
+
+                        pWindows(UBound(pWindows))->doMinimizeWindow = False                        
+                        pWindows(UBound(pWindows))->h2 += my - y1                        
+
+                        x1 = mx
+                        y1 = my
+                        If pWindows(UBound(pWindows))->w < MINW Then  pWindows(UBound(pWindows))->w = MINW
+                        If pWindows(UBound(pWindows))->h < MINH Then  pWindows(UBound(pWindows))->h = MINH
+                        If pWindows(UBound(pWindows))->w >= MAXW Then  pWindows(UBound(pWindows))->w = MAXW
+                        If pWindows(UBound(pWindows))->h >= MAXH Then  pWindows(UBound(pWindows))->h = MAXH
+                        RePaint()
+                    Loop Until mb = 0
+					Exit For
+				End If
+			End If
+			'----- Move -------------------------------------------------------------
+			If pWindows(i)->doMoveWindow = True Then
+				pWindows(i)->doMoveWindow = False
+				If pWindows(i)->id = CInt(iActiveWindow) Then
+	                Swap pWindows(i), pWindows(UBound(pWindows))
+                    Do
+                        GetMouse mx,my,,mb
+                        pWindows(UBound(pWindows))->x += mx - x1
+                        pWindows(UBound(pWindows))->y += my - y1
+                        x1 = mx
+                        y1 = my
+                        RePaint()
+                    Loop Until mb = 0
+					Exit For
+				EndIf
+			End If
+			'----Get Focus --------------------------------------------------
+			If pWindows(i)->doGetFocus = True Then
+				pWindows(i)->doGetFocus = False
+				If pWindows(i)->id = CInt(iActiveWindow) Then
+					Swap pWindows(i), pWindows(UBound(pWindows))
+'					RePaint()
+					Exit For
+				EndIf
+			End If
+		Next
+    End If
+
+	For i As Integer = 1 To UBound(pWindows) 'doevents of every window
+			If pWindows(i) = 0 Then Continue For	'skip deleted windows    
+    			'---- Close -------------------------------------------------------------
+			'if close window
+			If pWindows(i)->doCloseWindow = True Then
+				Delete pWindows(i)
+				pWindows(i) = 0
+			End If
+			'--- Minimize ------------------------------------------------------
+			'if minimize window
+			If pWindows(i) = 0 Then Continue For	'skip deleted windows    
+			If pWindows(i)->doMinimizeWindow = True Then
+				pWindows(i)->h = MINH
+			ElseIf pWindows(i)->doRestoreMinimize = True Then 
+				pWindows(i)->h = pWindows(i)->h2
+				pWindows(i)->doRestoreMinimize = False 
+			End If
+			'------ Maximize ------------------------------------------------------
+			'if maximize window
+			If pWindows(i) = 0 Then Continue For	'skip deleted windows    
+			If pWindows(i)->doMaximizeWindow = True Then
+				pWindows(i)->x = 0
+				pWindows(i)->y = 0
+				pWindows(i)->w = MAXW
+				pWindows(i)->h = MAXH
+			ElseIf pWindows(i)->doRestoreMaximize = True Then 
+				pWindows(i)->x = pWindows(i)->x2
+				pWindows(i)->y = pWindows(i)->y2
+				pWindows(i)->w = pWindows(i)->w2
+				pWindows(i)->h = pWindows(i)->h2
+				pWindows(i)->doRestoreMaximize = False 
+			End If
+	Next
+	RePaint()
+End Sub
+
+
 Sub ResizeWindow() '...'
 
 	Dim As Integer mx, my, mb, x1, y1
@@ -288,10 +391,6 @@ Sub MoveWindow() '...'
 End Sub
 
 Sub GetFocusWindow() '...'
-Dim As Integer mx, my, mb
-    GetMouse mx, my, , mb
-'    If mb = 1 Then
-
 		For i As Integer = UBound(pWindows) To LBound(pWindows) Step -1
 			If pWindows(i) = 0 Then Continue For
 			If pWindows(i)->doGetFocus = True Then
@@ -304,7 +403,6 @@ Dim As Integer mx, my, mb
 			End If
 		Next
 	RePaint()
-'	End If
 End Sub
 
 Sub CloseWindow()
@@ -320,7 +418,7 @@ Sub CloseWindow()
 	RePaint()
 End Sub
 
-Sub MinimizeWindow() '...'
+Sub MinimizeWindow()
 	For i As Integer = 1 To UBound(pWindows) 'doevents of every window
 		If pWindows(i) = 0 Then Continue For	'skip deleted windows
 		'if minimize window
