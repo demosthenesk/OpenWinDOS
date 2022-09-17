@@ -190,7 +190,7 @@ End Sub
 
 Sub hWindow.redraw()
 	If This.id = iActiveWindow Then
-		Line(x, y) - (x + w, y + h), &h0000ff, BF		'active frame
+		Line(x, y) - (x + w, y + h), &h0040ff, BF		'active frame
 	Else
 		Line(x, y) - (x + w, y + h), &hffffff, BF		'non active frame
 	EndIf
