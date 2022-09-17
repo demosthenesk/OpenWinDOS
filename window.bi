@@ -188,8 +188,13 @@ Sub hWindow.onCloseWindow() '...'
 	End If
 End Sub
 
-Sub hWindow.redraw() '...'
-	Line(x, y) - (x + w, y + h), &hffffff, BF				'frame
+Sub hWindow.redraw()
+	If This.id = iActiveWindow Then
+		Line(x, y) - (x + w, y + h), &h0000ff, BF		'active frame
+	Else
+		Line(x, y) - (x + w, y + h), &hffffff, BF		'non active frame
+	EndIf
+
 	Line(x + w - 10, y + h - 10) - (x + w, y + h), 0, BF	'angle
 	Line(x + 4, y + TBH) - (x + w - 4, y + h - 4), c, BF	'box
 	Draw String(x + 4, y + 8), title						'title
