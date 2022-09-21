@@ -1,4 +1,6 @@
-﻿File=window.bi
+﻿File=hButton.bi
+File=hControl.bi
+File=hWindow.bi
 *File=main.bas
 ProjectType=0
 Subsystem=1
@@ -9,7 +11,7 @@ PassAllModuleFilesToCompiler=false
 MajorVersion=0
 MinorVersion=0
 RevisionVersion=0
-BuildVersion=405
+BuildVersion=521
 AutoIncrementVersion=false
 ApplicationTitle=""
 ApplicationIcon=""
