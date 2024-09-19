@@ -317,7 +317,7 @@ Sub WatchWindows()
 				pWindows(i)->doRestoreMaximize = False 
 			End If
 	Next
-	Repaint()
+''	Repaint()
 End Sub
 
 
