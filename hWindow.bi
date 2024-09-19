@@ -297,9 +297,11 @@ Sub WatchWindows()
 			If pWindows(i) = 0 Then Continue For	'skip deleted windows    
 			If pWindows(i)->doMinimizeWindow = True Then
 				pWindows(i)->h = MINH
+				Repaint()
 			ElseIf pWindows(i)->doRestoreMinimize = True Then 
 				pWindows(i)->h = pWindows(i)->h2
 				pWindows(i)->doRestoreMinimize = False 
+				Repaint()
 			End If
 			'------ Maximize ------------------------------------------------------
 			'if maximize window
@@ -309,15 +311,14 @@ Sub WatchWindows()
 				pWindows(i)->y = 0
 				pWindows(i)->w = MAXW
 				pWindows(i)->h = MAXH
+				Repaint()
 			ElseIf pWindows(i)->doRestoreMaximize = True Then 
 				pWindows(i)->x = pWindows(i)->x2
 				pWindows(i)->y = pWindows(i)->y2
 				pWindows(i)->w = pWindows(i)->w2
 				pWindows(i)->h = pWindows(i)->h2
 				pWindows(i)->doRestoreMaximize = False 
+				Repaint()			
 			End If
 	Next
-''	Repaint()
 End Sub
-
-
